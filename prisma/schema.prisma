@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  mealPlans MealPlan[]
+  
+  @@map("users")
+}
+
+model MealPlan {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  caloriesTarget Int
+  proteinTarget  Int
+  preferences   String[] // dietary preferences, allergies, etc.
+  weekStartDate DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meals Meal[]
+  
+  @@map("meal_plans")
+}
+
+model Meal {
+  id          String   @id @default(cuid())
+  mealPlanId  String
+  dayOfWeek   Int      // 0-6 (Sunday to Saturday)
+  mealType    MealType
+  name        String
+  description String?
+  calories    Int
+  protein     Int
+  ingredients String[]
+  instructions String?
+  createdAt   DateTime @default(now())
+  
+  mealPlan MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  
+  @@map("meals")
+}
+
+enum MealType {
+  LUNCH
+  DINNER
+}
