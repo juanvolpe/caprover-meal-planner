@@ -2,6 +2,8 @@
 
 A Next.js web application that generates personalized weekly meal plans using OpenAI and stores them in PostgreSQL.
 
+🚀 **Now deployed on CapRover!**
+
 ## Features
 
 - **Personalized Meal Planning**: Generate lunch and dinner for 7 days
