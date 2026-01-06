@@ -2,7 +2,7 @@ FROM node:18-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
@@ -27,10 +27,12 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
+RUN apk add --no-cache openssl1.1-compat
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
+RUN mkdir -p ./public
+COPY --from=builder /app/public/* ./public/ 2>/dev/null || true
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
