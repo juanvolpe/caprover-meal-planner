@@ -1,12 +1,17 @@
 import OpenAI from 'openai'
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY is not set in environment variables')
+// Create OpenAI client only when API key is available
+let openai: OpenAI | null = null
+
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+} else {
+  console.warn('OPENAI_API_KEY is not set in environment variables')
 }
 
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+export { openai }
 
 export interface MealGenerationRequest {
   caloriesTarget: number
@@ -26,6 +31,10 @@ export interface GeneratedMeal {
 }
 
 export async function generateWeeklyMeals(request: MealGenerationRequest): Promise<GeneratedMeal[]> {
+  if (!openai) {
+    throw new Error('OpenAI client is not initialized. Please check your OPENAI_API_KEY environment variable.')
+  }
+
   const { caloriesTarget, proteinTarget, preferences } = request
   
   // Calculate target calories per meal (assuming lunch and dinner split)
