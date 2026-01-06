@@ -84,7 +84,7 @@ Generate all 14 meals (7 lunches + 7 dinners) in the JSON array.`
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
